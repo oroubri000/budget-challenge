@@ -1,0 +1,477 @@
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background: #f2f2f2;
+    color: #101010;
+  }
+  h1, h2, .headline-font {
+    font-family: 'Arial Narrow', 'Helvetica Neue Condensed', 'Franklin Gothic Bold', Arial, sans-serif;
+    font-stretch: condensed;
+    text-transform: uppercase;
+  }
+  .wrap { max-width: 1000px; margin: 0 auto; padding: 24px 20px 60px; }
+  header.hero {
+    background: linear-gradient(120deg, #000000 0%, #1a1a1a 55%, #2a0000 100%);
+    color: #fff;
+    border-radius: 4px;
+    padding: 28px 28px 22px;
+    margin-bottom: 22px;
+    border-left: 6px solid #d2232a;
+  }
+  header.hero h1 { margin: 0 0 6px; font-size: 30px; letter-spacing: 0.5px; font-weight: 800; }
+  header.hero p { margin: 0; opacity: 0.92; font-size: 14.5px; line-height: 1.5; max-width: 720px; text-transform: none; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
+  .badge {
+    display: inline-block; background: #d2232a; color: #fff; font-weight: 800;
+    font-size: 12px; padding: 4px 12px; border-radius: 3px; margin-bottom: 10px;
+    text-transform: uppercase; letter-spacing: 1px;
+    font-family: 'Arial Narrow', 'Helvetica Neue Condensed', Arial, sans-serif;
+  }
+  .team-row {
+    display: flex; gap: 12px; flex-wrap: wrap; margin-top: 16px;
+  }
+  .team-row input {
+    flex: 1; min-width: 220px; padding: 10px 12px; border-radius: 8px; border: none;
+    font-size: 15px; font-weight: 600;
+  }
+  .panel {
+    background: #fff; border-radius: 4px; padding: 22px 24px; margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08); border-top: 3px solid #101010;
+  }
+  .panel h2 { margin-top: 0; font-size: 20px; color: #101010; letter-spacing: 0.4px; }
+  .totalbar {
+    position: sticky; top: 0; z-index: 5; background: #101010; border-radius: 4px;
+    padding: 14px 22px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+  }
+  .totalbar .stat { text-align: center; }
+  .totalbar .stat .num { font-size: 22px; font-weight: 800; color: #fff; font-family: 'Arial Narrow', 'Helvetica Neue Condensed', Arial, sans-serif; }
+  .totalbar .stat .lab { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #b3b3b3; }
+  .ok { color: #4ed17c !important; }
+  .over { color: #ff5c5c !important; }
+  .under { color: #ffb347 !important; }
+  .catgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+  .catcard {
+    border: 1px solid #e3e7ee; border-radius: 12px; padding: 14px 16px; background: #fbfcfe;
+  }
+  .catcard .top { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .catcard .icon {
+    width: 34px; height: 34px; border-radius: 9px; display: flex; align-items: center;
+    justify-content: center; font-size: 12px; font-weight: 800; letter-spacing: 0.3px; flex-shrink: 0;
+  }
+  .catcard .title { font-weight: 700; font-size: 14.5px; color: #101010; }
+  .catcard .desc { font-size: 12px; color: #666; margin: 0 0 10px; line-height: 1.4; }
+  .inputrow { display: flex; align-items: center; gap: 8px; }
+  .inputrow span.dollar { font-weight: 700; color: #666; }
+  .inputrow input[type="number"] {
+    flex: 1; padding: 8px 10px; border-radius: 8px; border: 1px solid #ccd3de; font-size: 14.5px;
+  }
+  .pct { font-size: 12px; color: #888; margin-top: 6px; }
+  .slider { width: 100%; margin-top: 8px; }
+  .btnrow { display: flex; gap: 12px; margin-top: 6px; flex-wrap: wrap; }
+  button {
+    font-family: inherit; font-weight: 700; border: none; border-radius: 9px; padding: 13px 22px;
+    font-size: 15px; cursor: pointer; transition: transform 0.08s ease;
+  }
+  button:active { transform: scale(0.98); }
+  .btn-primary { background: #d2232a; color: #fff; text-transform: uppercase; letter-spacing: 0.5px; }
+  .btn-primary:disabled { background: #ccc; color: #888; cursor: not-allowed; }
+  .btn-secondary { background: #e6e6e6; color: #101010; }
+  .btn-danger { background: #fdecec; color: #d2232a; }
+  .note { font-size: 12.5px; color: #888; margin-top: 4px; }
+  .savebar { font-size: 12.5px; color: #1e7a3d; margin-top: 8px; min-height: 16px; }
+  #results { display: none; }
+  .gradebox {
+    text-align: center; padding: 26px 20px; border-radius: 4px; margin-bottom: 20px;
+    background: linear-gradient(120deg,#101010,#2a0000); color: #fff; border-top: 4px solid #d2232a;
+  }
+  .gradebox .letter { font-size: 68px; font-weight: 800; line-height: 1; margin-bottom: 6px; font-family: 'Arial Narrow', 'Helvetica Neue Condensed', Arial, sans-serif; color: #d2232a; }
+  .gradebox .score { font-size: 15px; opacity: 0.92; text-transform: uppercase; letter-spacing: 1px; }
+  .headline {
+    background: #fff; border-left: 5px solid #d2232a; border-radius: 4px; padding: 16px 18px;
+    font-size: 15px; line-height: 1.5; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+  .headline .kicker { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: #d2232a; font-weight: 800; margin-bottom: 6px; font-family: 'Arial Narrow', 'Helvetica Neue Condensed', Arial, sans-serif; }
+  .breakdown-row {
+    display: flex; align-items: flex-start; gap: 12px; padding: 12px 0; border-bottom: 1px solid #eef0f4;
+  }
+  .breakdown-row:last-child { border-bottom: none; }
+  .breakdown-row .score-chip {
+    flex-shrink: 0; width: 46px; height: 46px; border-radius: 4px; display: flex; align-items: center;
+    justify-content: center; font-weight: 800; font-size: 15px; color: #fff;
+  }
+  .breakdown-row .body { flex: 1; }
+  .breakdown-row .body .name { font-weight: 700; font-size: 14.5px; color: #101010; }
+  .breakdown-row .body .fb { font-size: 13px; color: #555; margin-top: 2px; line-height: 1.4; }
+  canvas#chart { max-height: 320px; }
+  .footer-links { text-align: center; font-size: 12px; color: #999; margin-top: 24px; }
+</style>
+
+<div class="wrap">
+  <header class="hero">
+    <span class="badge">Sports Marketing &middot; Preseason Simulation</span>
+    <h1>The $100 Million Preseason Budget Challenge</h1>
+    <p>Your group just took over as the front office of a brand-new professional team. You have exactly
+      <strong>$100,000,000</strong> to build a winning organization before the season starts. Every dollar you
+      assign below shapes how analysts grade your team's preseason outlook, so spend wisely.</p>
+    <div class="team-row">
+      <input id="teamName" type="text" placeholder="Your team name (e.g. Raleigh Rebels)" />
+      <input id="groupNames" type="text" placeholder="Group members (e.g. Maya, Josh, Priya, Dev)" />
+    </div>
+  </header>
+
+  <div class="totalbar">
+    <div class="stat">
+      <div class="num" id="totalSpent">$0</div>
+      <div class="lab">Total Allocated</div>
+    </div>
+    <div class="stat">
+      <div class="num" id="totalRemaining">$100,000,000</div>
+      <div class="lab">Remaining</div>
+    </div>
+    <div class="stat">
+      <div class="num" id="totalStatus">--</div>
+      <div class="lab">Status</div>
+    </div>
+    <div>
+      <button class="btn-secondary" id="resetBtn" type="button">Reset Budget</button>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Assign Your $100,000,000</h2>
+    <p class="note">Type a dollar amount for each department, or drag the slider. Your total must equal exactly
+      $100,000,000 before you can lock in your budget.</p>
+    <div class="catgrid" id="catgrid"></div>
+  </div>
+
+  <div class="panel">
+    <div class="btnrow">
+      <button class="btn-primary" id="lockBtn" type="button" disabled>Lock In Budget &amp; Get Preseason Grade</button>
+      <button class="btn-secondary" id="saveBtn" type="button">Save Progress</button>
+    </div>
+    <div class="savebar" id="saveMsg"></div>
+  </div>
+
+  <div id="results">
+    <div class="gradebox">
+      <div class="letter" id="letterGrade">B</div>
+      <div class="score" id="scoreLine">Preseason Outlook Score: 0 / 100</div>
+    </div>
+    <div class="headline">
+      <div class="kicker">Sports Desk &middot; Preseason Outlook</div>
+      <div id="headlineText"></div>
+    </div>
+    <div class="panel">
+      <h2>Budget Allocation</h2>
+      <canvas id="chart"></canvas>
+    </div>
+    <div class="panel">
+      <h2>Department-by-Department Breakdown</h2>
+      <div id="breakdown"></div>
+    </div>
+    <div class="btnrow">
+      <button class="btn-secondary" id="editBtn" type="button">Back to Edit Budget</button>
+    </div>
+  </div>
+
+  <div class="footer-links">Sports Marketing &middot; $100M Preseason Budget Challenge &middot; built for group work (4-5 students)</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js" integrity="sha384-iU8HYtnGQ8Cy4zl7gbNMOhsDTTKX02BTXptVP/vqAWIaTfM7isw76iyZCsjL2eVi" crossorigin="anonymous"></script>
+<script>
+(function () {
+  "use strict";
+
+  // ---- Category definitions, grounded in real pro-sports operating budget ranges ----
+  // idealMin/idealMax = % of total budget that earns full credit.
+  // closeMin/closeMax = wider band that earns partial credit.
+  var CATS = [
+    { key: "salaries", title: "Player Contracts & Salaries", icon: "PC", color: "#d2232a",
+      desc: "Signing and paying the athletes on your roster. The single biggest expense for almost every real pro team.",
+      idealMin: 40, idealMax: 50, closeMin: 33, closeMax: 57,
+      lowFb: "Too thin a roster budget means you can't attract or keep talented players -- expect a losing record.",
+      highFb: "You spent so much on salaries there's barely anything left to run the rest of the organization.",
+      idealFb: "A strong, well-paid roster without starving every other department. This is where real teams spend the most, too." },
+    { key: "facilities", title: "Facilities", icon: "FA", color: "#101010",
+      desc: "Stadium/arena upkeep, practice facilities, locker rooms, and game-day operations.",
+      idealMin: 10, idealMax: 16, closeMin: 6, closeMax: 20,
+      lowFb: "Rundown facilities hurt player performance and make fans (and free agents) think twice about your team.",
+      highFb: "Beautiful facilities, but you overspent here at the expense of the roster and marketing.",
+      idealFb: "Solid, well-maintained facilities that support both players and game-day fans." },
+    { key: "travel", title: "Travel & Equipment", icon: "TR", color: "#595959",
+      desc: "Flights, buses, hotels, uniforms, and gear needed to actually play the season.",
+      idealMin: 6, idealMax: 10, closeMin: 3, closeMax: 14,
+      lowFb: "Skimping on travel and gear leads to tired, under-equipped players on the road.",
+      highFb: "You're traveling in style, but this is more than a pro front office would ever spend here.",
+      idealFb: "Comfortable travel and quality equipment without overspending." },
+    { key: "advertising", title: "Advertising (Traditional & Digital)", icon: "AD", color: "#8c1017",
+      desc: "Paid ads on TV, radio, billboards, and social media/digital platforms to get your team's name out there.",
+      idealMin: 5, idealMax: 9, closeMin: 2, closeMax: 13,
+      lowFb: "Almost nobody outside diehard fans will know your team exists this season.",
+      highFb: "You're spending big on ads, but that money could grow the roster or facilities instead.",
+      idealFb: "A healthy paid-media push that builds awareness without crowding out other departments." },
+    { key: "marketing", title: "Marketing the Team (Brand & Events)", icon: "MK", color: "#ff4d4d",
+      desc: "Branding, community events, promotions, and content that build a loyal fan base over time.",
+      idealMin: 5, idealMax: 9, closeMin: 2, closeMax: 13,
+      lowFb: "A weak brand means empty seats and a fan base that never quite forms.",
+      highFb: "Great brand buzz, but marketing this heavy usually isn't worth cutting elsewhere for.",
+      idealFb: "A memorable brand and real fan connection, built at a sustainable cost." },
+    { key: "sponsorships", title: "Chasing Sponsorships", icon: "SP", color: "#2e2e2e",
+      desc: "Sales staff and pitches to land corporate sponsors and naming-rights deals -- this brings in future revenue.",
+      idealMin: 3, idealMax: 6, closeMin: 1, closeMax: 9,
+      lowFb: "Without effort here, you're leaving future sponsorship revenue on the table.",
+      highFb: "You're overinvesting in the sales pitch relative to everything else you actually need to run the team.",
+      idealFb: "A lean, effective push that should land solid sponsorship revenue down the road." },
+    { key: "analytics", title: "Analytics & Scouting", icon: "AN", color: "#8a8a8a",
+      desc: "Data analysts and scouts who find undervalued talent and game-plan against opponents.",
+      idealMin: 4, idealMax: 8, closeMin: 1, closeMax: 12,
+      lowFb: "Without scouting and data, you're drafting and game-planning blind.",
+      highFb: "Great analytics department, but this is more than most real front offices dedicate here.",
+      idealFb: "A sharp scouting and analytics operation that helps you find value other teams miss." },
+    { key: "merch", title: "Merchandise", icon: "MC", color: "#b3001b",
+      desc: "Producing and stocking jerseys, hats, and other team gear for fans to buy.",
+      idealMin: 3, idealMax: 6, closeMin: 1, closeMax: 9,
+      lowFb: "Fans who want to show team pride won't have much merchandise to buy.",
+      highFb: "You have plenty of gear to sell, but this line rarely needs this much investment.",
+      idealFb: "Enough product variety to meet fan demand without tying up too much cash." },
+    { key: "concessions", title: "Concessions & Parking", icon: "CP", color: "#737373",
+      desc: "Game-day food, drink, and parking operations that shape the fan experience (and bring in extra revenue).",
+      idealMin: 3, idealMax: 6, closeMin: 1, closeMax: 9,
+      lowFb: "A rough game-day experience (long lines, few options) turns fans off from coming back.",
+      highFb: "Great fan experience, but this department doesn't usually need this large a slice of the budget.",
+      idealFb: "A smooth, enjoyable game-day experience that keeps fans coming back." }
+  ];
+
+  var TOTAL_BUDGET = 100000000;
+  var STORAGE_KEY = "sports_budget_challenge_v1";
+
+  var grid = document.getElementById("catgrid");
+  var state = {};
+  CATS.forEach(function (c) { state[c.key] = 0; });
+
+  CATS.forEach(function (c) {
+    var card = document.createElement("div");
+    card.className = "catcard";
+    card.innerHTML =
+      '<div class="top">' +
+        '<div class="icon" style="background:' + c.color + '22; color:' + c.color + '">' + c.icon + '</div>' +
+        '<div class="title">' + c.title + '</div>' +
+      '</div>' +
+      '<p class="desc">' + c.desc + '</p>' +
+      '<div class="inputrow">' +
+        '<span class="dollar">$</span>' +
+        '<input type="number" min="0" max="100000000" step="500000" id="in-' + c.key + '" />' +
+      '</div>' +
+      '<input type="range" class="slider" min="0" max="100000000" step="500000" id="sl-' + c.key + '" />' +
+      '<div class="pct" id="pct-' + c.key + '">0% of total budget</div>';
+    grid.appendChild(card);
+  });
+
+  function fmtMoney(n) {
+    return "$" + Math.round(n).toLocaleString("en-US");
+  }
+
+  function syncFromState() {
+    var total = 0;
+    CATS.forEach(function (c) {
+      var v = state[c.key] || 0;
+      total += v;
+      document.getElementById("in-" + c.key).value = v || "";
+      document.getElementById("sl-" + c.key).value = v;
+      document.getElementById("pct-" + c.key).textContent =
+        (total >= 0 ? (v / TOTAL_BUDGET * 100).toFixed(1) : "0") + "% of total budget";
+    });
+    var remaining = TOTAL_BUDGET - total;
+    document.getElementById("totalSpent").textContent = fmtMoney(total);
+    document.getElementById("totalRemaining").textContent = fmtMoney(remaining);
+    var statusEl = document.getElementById("totalStatus");
+    var lockBtn = document.getElementById("lockBtn");
+    if (remaining === 0 && total > 0) {
+      statusEl.textContent = "Ready!";
+      statusEl.className = "num ok";
+      lockBtn.disabled = false;
+    } else if (remaining < 0) {
+      statusEl.textContent = "Over Budget";
+      statusEl.className = "num over";
+      lockBtn.disabled = true;
+    } else {
+      statusEl.textContent = "Under Budget";
+      statusEl.className = "num under";
+      lockBtn.disabled = true;
+    }
+  }
+
+  CATS.forEach(function (c) {
+    var numInput = document.getElementById("in-" + c.key);
+    var slider = document.getElementById("sl-" + c.key);
+    numInput.addEventListener("input", function () {
+      var v = parseFloat(numInput.value);
+      if (isNaN(v) || v < 0) v = 0;
+      if (v > TOTAL_BUDGET) v = TOTAL_BUDGET;
+      state[c.key] = v;
+      syncFromState();
+    });
+    slider.addEventListener("input", function () {
+      state[c.key] = parseFloat(slider.value);
+      syncFromState();
+    });
+  });
+
+  document.getElementById("resetBtn").addEventListener("click", function () {
+    CATS.forEach(function (c) { state[c.key] = 0; });
+    syncFromState();
+    document.getElementById("results").style.display = "none";
+  });
+
+  // ---- Save / load progress (per-browser, via localStorage) ----
+  function saveProgress(silent) {
+    try {
+      var payload = {
+        teamName: document.getElementById("teamName").value,
+        groupNames: document.getElementById("groupNames").value,
+        state: state
+      };
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+      if (!silent) {
+        var msg = document.getElementById("saveMsg");
+        msg.textContent = "Progress saved on this device ✓ (" + new Date().toLocaleTimeString() + ")";
+        setTimeout(function () { msg.textContent = ""; }, 4000);
+      }
+    } catch (e) {
+      console.warn("Could not save progress:", e);
+      var msg2 = document.getElementById("saveMsg");
+      if (!silent) msg2.textContent = "Couldn't save on this device/browser. Screenshot your budget as a backup.";
+    }
+  }
+
+  function loadProgress() {
+    try {
+      var raw = window.localStorage.getItem(STORAGE_KEY);
+      if (!raw) return;
+      var payload = JSON.parse(raw);
+      if (payload.teamName) document.getElementById("teamName").value = payload.teamName;
+      if (payload.groupNames) document.getElementById("groupNames").value = payload.groupNames;
+      if (payload.state) {
+        CATS.forEach(function (c) {
+          if (typeof payload.state[c.key] === "number") state[c.key] = payload.state[c.key];
+        });
+      }
+    } catch (e) {
+      console.warn("Could not load saved progress:", e);
+    }
+  }
+
+  document.getElementById("saveBtn").addEventListener("click", function () { saveProgress(false); });
+
+  // ---- Grading ----
+  function scoreCategory(c) {
+    var v = state[c.key] || 0;
+    var pct = v / TOTAL_BUDGET * 100;
+    if (pct >= c.idealMin && pct <= c.idealMax) {
+      return { points: 10, tier: "ideal", pct: pct };
+    } else if (pct >= c.closeMin && pct <= c.closeMax) {
+      return { points: 6, tier: "close", pct: pct };
+    } else {
+      return { points: 2, tier: "off", pct: pct };
+    }
+  }
+
+  var chartInstance = null;
+
+  function renderResults() {
+    var results = CATS.map(function (c) {
+      var s = scoreCategory(c);
+      return { cat: c, score: s };
+    });
+    var totalPoints = results.reduce(function (sum, r) { return sum + r.score.points; }, 0);
+    var maxPoints = CATS.length * 10;
+    var scaled = Math.round((totalPoints / maxPoints) * 100);
+
+    var letter = "F";
+    if (scaled >= 90) letter = "A";
+    else if (scaled >= 80) letter = "B";
+    else if (scaled >= 70) letter = "C";
+    else if (scaled >= 60) letter = "D";
+
+    document.getElementById("letterGrade").textContent = letter;
+    document.getElementById("scoreLine").textContent = "Preseason Outlook Score: " + scaled + " / 100";
+
+    // Headline: best and worst category by points, tie-break by how centered in ideal range
+    var sorted = results.slice().sort(function (a, b) { return b.score.points - a.score.points; });
+    var best = sorted[0];
+    var worstSorted = results.slice().sort(function (a, b) { return a.score.points - b.score.points; });
+    var worst = worstSorted[0];
+    var teamName = (document.getElementById("teamName").value || "Your Team").trim() || "Your Team";
+
+    var headline;
+    if (best.score.points === worst.score.points) {
+      headline = teamName + " enters the season with a balanced front office and no glaring weaknesses to point to " +
+        "-- analysts call it a steady, if unspectacular, build heading into opening day.";
+    } else {
+      headline = teamName + " enters the season " + (scaled >= 80 ? "with real buzz" : scaled >= 60 ? "as a bit of a wild card" : "as a projected underdog") +
+        ". Analysts praise the front office's investment in " + best.cat.title.toLowerCase() +
+        ", but questions remain about a " + (worst.score.tier === "off" && worst.score.pct < worst.cat.closeMin ? "thin" : "bloated") +
+        " " + worst.cat.title.toLowerCase() + " budget heading into opening day.";
+    }
+    document.getElementById("headlineText").textContent = headline;
+
+    // Breakdown list
+    var breakdownEl = document.getElementById("breakdown");
+    breakdownEl.innerHTML = "";
+    results.forEach(function (r) {
+      var fb = r.score.tier === "ideal" ? r.cat.idealFb :
+        (r.score.pct < r.cat.idealMin ? r.cat.lowFb : r.cat.highFb);
+      var chipColor = r.score.points === 10 ? "#1e7a3d" : (r.score.points === 6 ? "#737373" : "#d2232a");
+      var row = document.createElement("div");
+      row.className = "breakdown-row";
+      row.innerHTML =
+        '<div class="score-chip" style="background:' + chipColor + '">' + r.score.points + '/10</div>' +
+        '<div class="body">' +
+          '<div class="name">' + r.cat.title + ' -- ' + r.score.pct.toFixed(1) + '% ($' + Math.round(state[r.cat.key]).toLocaleString("en-US") + ')</div>' +
+          '<div class="fb">' + fb + '</div>' +
+        '</div>';
+      breakdownEl.appendChild(row);
+    });
+
+    // Chart
+    var ctx = document.getElementById("chart").getContext("2d");
+    if (chartInstance) chartInstance.destroy();
+    chartInstance = new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels: CATS.map(function (c) { return c.title; }),
+        datasets: [{
+          label: "% of $100M Budget",
+          data: CATS.map(function (c) { return (state[c.key] / TOTAL_BUDGET * 100); }),
+          backgroundColor: CATS.map(function (c) { return c.color; })
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false }, title: { display: false } },
+        scales: {
+          y: { beginAtZero: true, title: { display: true, text: "% of budget" } },
+          x: { ticks: { autoSkip: false, maxRotation: 40, minRotation: 20 } }
+        }
+      }
+    });
+
+    document.getElementById("results").style.display = "block";
+    saveProgress(true);
+    document.getElementById("results").scrollIntoView({ behavior: "smooth" });
+  }
+
+  document.getElementById("lockBtn").addEventListener("click", renderResults);
+  document.getElementById("editBtn").addEventListener("click", function () {
+    document.getElementById("results").style.display = "none";
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+
+  loadProgress();
+  syncFromState();
+})();
+</script>
