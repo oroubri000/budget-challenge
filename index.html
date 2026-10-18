@@ -322,6 +322,7 @@
 
   document.getElementById("resetBtn").addEventListener("click", function () {
     CATS.forEach(function (c) { state[c.key] = 0; });
+    try { window.localStorage.removeItem(STORAGE_KEY); } catch (e) {}
     syncFromState();
     document.getElementById("results").style.display = "none";
   });
